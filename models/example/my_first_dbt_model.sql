@@ -25,3 +25,4 @@ from source_data
 */
 
 -- where id is not null
+---BURASI BENİM İİKİNCİ DALIMDAKİ DENEME SATIRIRIDIR.---
