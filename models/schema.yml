@@ -1,0 +1,101 @@
+version: 2
+
+sources:
+  - name: raw
+    schema: gz_raw_data
+    tables:
+      - name: sales
+        identifier: raw_gz_sales
+        description: "Greenweez satışları / her orders_id içindeki product satırı"
+        columns:
+          - name: date_date
+            description: "Satın alma tarihi"
+          - name: orders_id
+            description: "Sipariş ID"
+          - name: pdt_id
+            description: "Ürün ID"
+          - name: revenue
+            description: "Satış geliri"
+          - name: quantity
+            description: "Satılan adet"
+        tests:
+          - unique:
+              column_name: "(orders_id || '-' || pdt_id)"
+
+      - name: product
+        identifier: raw_gz_product
+        description: "Ürün bilgileri"
+        columns:
+          - name: products_id
+            description: "Ürün ID"
+            tests:
+              - unique
+              - not_null
+          - name: purchse_price
+            description: "Ürün alış fiyatı"
+
+      - name: ship
+        identifier: raw_gz_ship
+        description: "Kargo ve lojistik bilgileri"
+        columns:
+          - name: orders_id
+            description: "Sipariş ID"
+            tests:
+              - unique
+              - not_null
+          - name: shipping_fee
+            description: "Kargo ücreti"
+          - name: logcost
+            description: "Lojistik maliyet"
+          - name: ship_cost
+            description: "Taşıyıcı maliyeti"
+
+models:
+  - name: int_sales_margin
+    description: "Sipariş–ürün kırılımında margin hesapları (intermediate)"
+    columns:
+      - name: orders_id
+        description: "Sipariş ID"
+        tests:
+          - not_null
+      - name: revenue
+        description: "Satış geliri"
+      - name: margin
+        description: "Brüt kâr"
+
+  - name: finance_days
+    description: "Finans ekibi için günlük KPI mart tablosu"
+    columns:
+      - name: date_date
+        description: "Gün"
+        tests:
+          - not_null
+          - unique
+
+      - name: nb_transactions
+        description: "Günlük sipariş sayısı"
+        tests:
+          - not_null
+
+      - name: revenue
+        description: "Toplam günlük ciro"
+        tests:
+          - not_null
+
+      - name: average_basket
+        description: "Ortalama sepet tutarı"
+
+      - name: purchase_cost
+        description: "Toplam ürün maliyeti"
+
+      - name: ship_cost
+        description: "Toplam kargo maliyeti"
+
+      - name: log_cost
+        description: "Toplam lojistik maliyeti"
+
+      - name: margin
+        description: "Günlük toplam kâr"
+
+      - name: margin_rate
+        description: "Kâr oranı (margin / revenue)"
